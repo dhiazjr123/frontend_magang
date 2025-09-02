@@ -85,7 +85,7 @@ export default function Home() {
               My Project
             </h1>
             <p className="mt-2 text-sm md:text-base text-white/70">
-              Akses cepat ke fitur favoritmu—tampilan lebih modern ✨
+             
             </p>
           </div>
 
@@ -145,7 +145,7 @@ export default function Home() {
           </ul>
 
           <div className="mt-8 flex items-center justify-between text-xs text-white/50">
-            <span>v1.2 • Beautiful UI</span>
+            <span></span>
             <span>© {new Date().getFullYear()} You</span>
           </div>
         </div>
