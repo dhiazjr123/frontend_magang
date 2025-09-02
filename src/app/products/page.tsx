@@ -1,32 +1,40 @@
 import { TProduct } from "@/app/products/types/product.type";
 import Link from "next/link";
-import React from "react";
 
 type Props = {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  searchParams: { [key: string]: string | string[] | undefined };
 };
 
 const endPoint = "https://dummyjson.com/products";
 
-const page = async (props: Props) => {
-  const searchParams = await props.searchParams;
-
-  const limit = searchParams.limit as string;
-  const skip = searchParams.skip as string;
-
-  const params = new URLSearchParams({
-    limit: limit,
-    skip: skip,
-  });
-
-  const response = await fetch(`${endPoint}?${params.toString()}`).then(
-    async (response) => {
-      const data = await response.json();
-      return data;
-    }
+const Page = async ({ searchParams }: Props) => {
+  // Ambil dan validasi angka
+  const limitNum = Number(
+    Array.isArray(searchParams.limit) ? searchParams.limit[0] : searchParams.limit
+  );
+  const skipNum = Number(
+    Array.isArray(searchParams.skip) ? searchParams.skip[0] : searchParams.skip
   );
 
-  const products: TProduct[] = response.products;
+  const params = new URLSearchParams();
+  if (!Number.isNaN(limitNum)) params.set("limit", String(limitNum));
+  if (!Number.isNaN(skipNum)) params.set("skip", String(skipNum));
+
+  const res = await fetch(
+    `${endPoint}${params.toString() ? `?${params.toString()}` : ""}`,
+    { cache: "no-store" } // opsional
+  );
+
+  if (!res.ok) {
+    return <div>Gagal memuat produk (status {res.status}).</div>;
+  }
+
+  const data = await res.json();
+  const products: TProduct[] | undefined = data?.products;
+
+  if (!products) {
+    return <div>Data produk tidak ditemukan.</div>;
+  }
 
   return (
     <div>
@@ -41,4 +49,4 @@ const page = async (props: Props) => {
   );
 };
 
-export default page;
+export default Page;
